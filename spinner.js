@@ -3,9 +3,9 @@ export function getHTMLForSpinner(){
   ``
 }
 export function showSpinner() {
-  document.getElementById('global-spinner')?.classList.remove('hidden');
+  document.getElementById('global-spinner')?.classList.remove('hide');
 }
 
 export function hideSpinner() {
-  document.getElementById('global-spinner')?.classList.add('hidden');
+  document.getElementById('global-spinner')?.classList.add('hide');
 }
