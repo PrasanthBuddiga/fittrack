@@ -30,7 +30,7 @@ let listenersAttached = false;
 
 
 function attachEventListeners() {
-  if (listenersAttached) return; // prevent attaching multiple times
+  // if (listenersAttached) return; // prevent attaching multiple times
   listenersAttached = true;
 
 const prevBtn = document.getElementById('prev-date');
@@ -38,13 +38,18 @@ const prevBtn = document.getElementById('prev-date');
   const calendarIcon = document.getElementById('calendar-icon');
   const hiddenDateInput = document.getElementById('date-picker');
 
-   const foodLogContainer=document.getElementById('foodLog');
-foodLogContainer.addEventListener('click', (e) => {
-  if (e.target.classList.contains('remove')) {
-    const logId = e.target.getAttribute('log-id');
-    removeLog(logId);
-  }
-});
+    const foodLogContainer = document.getElementById('foodLog');
+
+  // Remove old event listener (in case it's duplicated)
+  const newContainer = foodLogContainer.cloneNode(true);
+  foodLogContainer.parentNode.replaceChild(newContainer, foodLogContainer);
+
+  newContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove')) {
+      const logId = e.target.getAttribute('log-id');
+      removeLog(logId);
+    }
+  });
 }
 export function updateSelectedDate(selectedDate) {
   console.log("adding selected Date", selectedDate)
@@ -74,7 +79,7 @@ export function updateSelectedDate(selectedDate) {
 export function getSelectedDayLog(){
   dayLog='';
   let truncatedDate=formattedDate.split("y,")[1].slice(1);
-  if(foodDiary.length===0) return;
+  if (!foodDiary || !foodDiary.foodList || foodDiary.foodList.length === 0) return;
   else {
   foodDiary.foodList.forEach(element => {
     if(element.Date===truncatedDate){
@@ -121,8 +126,9 @@ let truncatedDate=formattedDate.split("y,")[1].slice(1);
      if (response.ok) {
     console.log('Deleted successfully');
 
-    // ✅ Re-fetch data and re-render list
-    fetchFoodList();
+    await fetchFoodList(); // updates `foodDiary`
+    getSelectedDayLog();   // updates `dayLog` based on current date
+    displayDayLog(); 
   } else {
     const error = await response.json();
     console.error('Delete failed:', error);
