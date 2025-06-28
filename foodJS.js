@@ -60,6 +60,8 @@ export function updateSelectedDate(selectedDate) {
 }
 
  async function  fetchFoodList(){
+  console.log("this is the base url",API_BASE_URL);
+  console.log(window.location.host);
   await fetch(`${API_BASE_URL}/api/food-log`)
   .then(res=>{if(!res.ok) throw new Error("Failed to fetch Data");return res.json()})
   .then(data=>{
