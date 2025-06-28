@@ -8,4 +8,4 @@ const ENVIRONMENTS = {
 };
 
 // Use hostname to map to correct backend URL
-export const API_BASE_URL = ENVIRONMENTS[window.location.hostname] || 'http://localhost:3000';
+export const API_BASE_URL = ENVIRONMENTS[window.location.host] || 'http://localhost:3000';
