@@ -1,6 +1,8 @@
 // import { match } from "assert";
 import { formattedDate } from "./foodJS.js";
 import { contentDiv } from "./mainJS.js";
+import {API_BASE_URL} from "./config.js";
+
 let matchedResults='';
 export function renderAddFoodPage(contentDiv){
  contentDiv.innerHTML=
@@ -38,7 +40,7 @@ function attachEventListeners(){
 
 async function  searchFood(foodName){
   const searchSection = document.getElementById('search-section');
-   const url = `http://localhost:3000/api/usda/search?q=${encodeURIComponent(foodName)}`;
+   const url = `${API_BASE_URL}/api/usda/search?q=${encodeURIComponent(foodName)}`;
    try{
     const res=await fetch(url); 
     const data=await res.json();
@@ -52,7 +54,7 @@ async function  searchFood(foodName){
 }
 async function searchFoodNTRX(foodName) {
   const searchSection = document.getElementById('search-section');
-  const url=`http://localhost:3000/api/ntrx/search?food=${encodeURIComponent(foodName)}`;
+  const url=`${API_BASE_URL}/api/ntrx/search?food=${encodeURIComponent(foodName)}`;
   try{
     const res=await fetch(url);
     const data=await res.json();
@@ -227,7 +229,7 @@ document.querySelectorAll('.matched-item').forEach(item=>{
 }
 
 async function postFoodToDayLog(output){
-  const url='http://localhost:3000/api/food-log';
+  const url=`${API_BASE_URL}/api/food-log`;
 
   try{
     console.log('sending the date ', formattedDate);

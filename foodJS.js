@@ -1,6 +1,7 @@
 
 // let selectedDateStr=sessionStorage.getItem('selectedDate');
 // let selectedDate = selectedDateStr ? new Date(selectedDateStr) : new Date();
+import {API_BASE_URL} from "./config.js";
 
 export let formattedDate;
 let foodDiary;
@@ -59,7 +60,7 @@ export function updateSelectedDate(selectedDate) {
 }
 
  async function  fetchFoodList(){
-  await fetch('http://localhost:3000/api/food-log')
+  await fetch(`${API_BASE_URL}/api/food-log`)
   .then(res=>{if(!res.ok) throw new Error("Failed to fetch Data");return res.json()})
   .then(data=>{
      foodDiary=data;
@@ -105,7 +106,7 @@ export function displayDayLog(){
 }
 async function removeLog(logIndex){
 //  dayLog.splice(logIndex, 1);
-const url='http://localhost:3000/api/food-log';
+const url=`${API_BASE_URL}/api/food-log`;
 let truncatedDate=formattedDate.split("y,")[1].slice(1);
   console.log(logIndex);
  const response = await fetch(url, {
