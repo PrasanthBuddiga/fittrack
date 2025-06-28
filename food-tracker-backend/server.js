@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const { error } = require('console');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const appID='b08494a7';   
 const appKey='529d67ea57ab70b06156cae6a637e856';
 
