@@ -34,6 +34,24 @@
           "carbs": "400.0",
           "fats": "0.0",
           "calories": "0.0"
+        },
+        {
+          "id": "LogId_1751094349671",
+          "name": "Bananas, dehydrated, or banana powder",
+          "Qty": 1,
+          "protein": "3.9",
+          "carbs": "88.3",
+          "fats": "1.8",
+          "calories": "346.0"
+        },
+        {
+          "id": "LogId_1751094471056",
+          "name": "Yogurt, soy",
+          "Qty": 1,
+          "protein": "4.8",
+          "carbs": "12.3",
+          "fats": "2.6",
+          "calories": "90.0"
         }
       ]
     }

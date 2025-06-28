@@ -151,6 +151,11 @@ const output = {
 };
     console.log('Adding food to diary:', output);
     const response = await postFoodToDayLog(output);
+    if (response?.yourKey) {
+      showSpinner();
+    setTimeout(()=>{hideSpinner()},2000);
+    window.location.hash="#food/diary";
+}
   });
 }
 
@@ -202,7 +207,7 @@ async function postFoodToDayLog(output){
       },
       body: JSON.stringify({date:truncatedDate,entry:output})
     });
-
+    
     if (!response.ok) {
       throw new Error(`Server error: ${response.status}`);
     }
