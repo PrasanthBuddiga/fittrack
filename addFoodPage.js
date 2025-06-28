@@ -151,7 +151,6 @@ const output = {
 };
     console.log('Adding food to diary:', output);
     const response = await postFoodToDayLog(output);
-    alert(response);
   });
 }
 
@@ -207,7 +206,6 @@ async function postFoodToDayLog(output){
     if (!response.ok) {
       throw new Error(`Server error: ${response.status}`);
     }
-    // if(response.status==='201') window.alert("Hi");
     const result = await response.json();
     return result;
     
