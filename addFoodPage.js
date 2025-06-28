@@ -245,14 +245,11 @@ async function postFoodToDayLog(output){
     if (!response.ok) {
       throw new Error(`Server error: ${response.status}`);
     }
-    if(response.status==='201') window.alert("Hi")
-
+    // if(response.status==='201') window.alert("Hi");
     const result = await response.json();
-    console.log('Food log saved successfully:', result);
     return result;
-    // Optional: show a success message to the user
+    
   } catch (error) {
     console.error('Failed to save food log:', error.message);
-    // Optional: show an error message to the user
     }
   }

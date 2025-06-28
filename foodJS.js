@@ -2,6 +2,8 @@
 // let selectedDateStr=sessionStorage.getItem('selectedDate');
 // let selectedDate = selectedDateStr ? new Date(selectedDateStr) : new Date();
 import {API_BASE_URL} from "./config.js";
+import { showSpinner, hideSpinner,getHTMLForSpinner } from './spinner.js';
+
 
 export let formattedDate;
 let foodDiary;
@@ -65,8 +67,7 @@ export function updateSelectedDate(selectedDate) {
 }
 
  async function  fetchFoodList(){
-  console.log("this is the base url",API_BASE_URL);
-  console.log(window.location.host);
+  showSpinner();
   await fetch(`${API_BASE_URL}/api/food-log`)
   .then(res=>{if(!res.ok) throw new Error("Failed to fetch Data");return res.json()})
   .then(data=>{
@@ -75,6 +76,7 @@ export function updateSelectedDate(selectedDate) {
      displayDayLog();
   })
   .catch(err=>{console.log("Error fetching Data:", err)})
+  .finally (()=>hideSpinner())
 }
 export function getSelectedDayLog(){
   dayLog='';
