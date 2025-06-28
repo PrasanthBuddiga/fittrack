@@ -113,7 +113,7 @@ catch(err){console.error(`Error fetching details for ${item.food_name}:`, err.me
 }
 // Read food log
 app.get('/api/food-log', (req, res) => {
-  setTimeout(() => {console.log('sending res');
+  
 
 try {
     const rawData = fs.readFileSync(dataFilePath,'utf-8');
@@ -122,8 +122,6 @@ try {
   } catch (err) {
     res.status(500).json({ error: 'Failed to read log file', details: err.message });
   }
-
-  }, 10000);
   
 });
 

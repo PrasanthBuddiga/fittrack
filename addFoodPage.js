@@ -2,6 +2,7 @@
 import { formattedDate } from "./foodJS.js";
 import { contentDiv } from "./mainJS.js";
 import {API_BASE_URL} from "./config.js";
+import { hideSpinner, showSpinner } from "./spinner.js";
 
 let matchedResults='';
 export function renderAddFoodPage(contentDiv){
@@ -41,6 +42,7 @@ function attachEventListeners(){
 async function  searchFood(foodName){
   const searchSection = document.getElementById('search-section');
    const url = `${API_BASE_URL}/api/usda/search?q=${encodeURIComponent(foodName)}`;
+   showSpinner();
    try{
     const res=await fetch(url); 
     const data=await res.json();
@@ -48,6 +50,7 @@ async function  searchFood(foodName){
     searchSection.style.display = 'block';
     renderSearchResults();
    } catch(err) {console.log(err)}
+   hideSpinner();
 
    
 
@@ -98,52 +101,11 @@ document.getElementById('matched_rslt').addEventListener('click', (e) => {
   if (!item) return;
 
   const id = item.getAttribute('tabindex');
-
-  // You can store `itemData` from matchedResults using id, if needed
   const itemData = matchedResults.find(i => i.fdcId == id);
 
   renderQuantitySelector(itemData);
 });
-//  document.querySelectorAll('.matched-item').forEach(item=>{
-//   item.addEventListener('click',()=>{
-//    let id= item.getAttribute('tabindex');
-//    let isBranded=item.brandName?true:false;
-//      selectQtyDiv.innerHTML=
-//      `<h3>Food Name<h3>
-//       <div class='inputWrapper'>
-// <input id="servingInput" type='text' value='1.0' /> <span>servings of</span> <select name="quantity" id="quantity">
-//   <option value="100 gm">100gm</option>
-//   <option value="10 gm">10 gm</option>
-//   <option value="1 gm">1 gm</option>
-//   <option value="1 Serving">1 Serving</option>
-// </select>
-//       </div>
-//    <button type="button" class='addToDairy'>Add Food to Diary</button>
-//      `
-//      const addButton = selectQtyDiv.querySelector('.addToDairy');
-//   addButton.addEventListener('click', async (e) => {
-//       e.preventDefault();
-//       const servingQty = document.getElementById('servingInput').value;
-//       const quantity = document.getElementById('quantity').value;
-      
-//       const output={
-//            name:"Food Name",
-//            Qty:quantity,
-//            protein:35,
-//            carbs:20,
-//            fats:20,
-//            calories:200
-//       }
-//       console.log('Adding food to diary:', output);
-//      const response= await postFoodToDayLog(output);
-//       alert(response);
-      
-//       // You can now send this data to your backend or update the UI as needed
-//     });
-     
-//   })
-  
-// })
+
 
   }
 function renderQuantitySelector(item) {
