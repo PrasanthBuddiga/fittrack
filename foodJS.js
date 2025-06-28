@@ -118,5 +118,14 @@ let truncatedDate=formattedDate.split("y,")[1].slice(1);
       },
       body: JSON.stringify({date:truncatedDate,id:logIndex})
     });
+     if (response.ok) {
+    console.log('Deleted successfully');
+
+    // ✅ Re-fetch data and re-render list
+    fetchFoodList();
+  } else {
+    const error = await response.json();
+    console.error('Delete failed:', error);
+  }
 
 }
