@@ -151,7 +151,7 @@ const output = {
 };
     console.log('Adding food to diary:', output);
     const response = await postFoodToDayLog(output);
-    if (response?.yourKey) {
+    if (response?.id) {
       showSpinner();
     setTimeout(()=>{hideSpinner()},2000);
     window.location.hash="#food/diary";
