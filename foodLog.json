@@ -1,0 +1,50 @@
+{
+  "foodList": [
+    {
+      "Date": "May 22, 2025",
+      "foodLog": [
+        {
+          "id": 1,
+          "name": "Quackr Oats",
+          "Qty": 2,
+          "protein": 10,
+          "carbs": 60,
+          "fats": 10,
+          "calories": 1200
+        },
+        {
+          "id": 2,
+          "name": "GV Honey",
+          "Qty": 1,
+          "protein": 0,
+          "carbs": 10,
+          "fats": 1,
+          "calories": 1300
+        }
+      ]
+    },
+    {
+      "Date": "May 21, 2025",
+      "foodLog": [
+        {
+          "id": 1,
+          "name": "Quackr Oats",
+          "Qty": 2,
+          "protein": 10,
+          "carbs": 60,
+          "fats": 10,
+          "calories": 1200
+        },
+        {
+          "id": 2,
+          "name": "GV Honey",
+          "Qty": 1,
+          "protein": 0,
+          "carbs": 10,
+          "fats": 1,
+          "calories": 1300
+        }
+      ]
+    }
+  ]
+}

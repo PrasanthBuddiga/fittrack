@@ -1,0 +1,27 @@
+{
+  "foodList": [
+    {
+      "Date": "Jun 11, 2025",
+      "foodLog": [
+        {
+          "id": "LogId_1750914706673",
+          "name": "Banana, baked",
+          "Qty": 1,
+          "protein": "0.8",
+          "carbs": "32.4",
+          "fats": "3.2",
+          "calories": "161.0"
+        },
+        {
+          "id": "LogId_1750915242571",
+          "name": "MAGGI, SPICY SEASONING",
+          "Qty": 100,
+          "protein": "0.0",
+          "carbs": "400.0",
+          "fats": "0.0",
+          "calories": "0.0"
+        }
+      ]
+    }
+  ]
+}
