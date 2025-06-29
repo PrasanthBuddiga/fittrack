@@ -20,7 +20,7 @@ body {
   color: #1c1c1c;
   /* padding: 20px; */
 }
-.main-bdy{
+#main-bdy{
   margin-top: 10px !important;
   display: grid;
   grid-template-columns: 1fr 4fr 1fr;

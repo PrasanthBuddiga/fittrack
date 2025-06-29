@@ -1,0 +1,9 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "pbuddiga@gmail.com",
+      "passwordHash": "$2b$10$u7Qw1EH8r8B6ao/aMFupWuOiLa4mKAigvUysNPxUuvGzzYKbhrAZS"
+    }
+  ]
+}

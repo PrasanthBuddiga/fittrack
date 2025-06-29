@@ -1,22 +1,68 @@
 import { renderFood,updateSelectedDate,getSelectedDayLog,displayDayLog } from "./foodJS.js";
 import { renderAddFoodPage } from "./addFoodPage.js";
 import { renderDashboard,loadWeightTracker,loadNutrientProgress,loadCalorieTracker,renderMacroChart } from "./dashboard.js";
+import {loginPageHTML,login} from './loginPage.js';
 
 export let isDiary=true;
-const form = document.getElementById('food-form');
-const foodList = document.getElementById('food-list');
-const totalCaloriesEl = document.getElementById('total-calories');
-const yesBtn=document.getElementById('yes_btn');
-const noBtn=document.getElementById('no_btn');
-const logoutDiv=document.getElementById('logout');
-document.getElementById('logout')
-document.getElementById('logout')
-document.getElementById('logout')
-export const contentDiv = document.getElementById('content');
-const navLinks = document.querySelectorAll('.list-elem a');
-const logFdBtn=document.getElementById("log-fd");
+export let contentDiv = null;
+let form 
+let foodList 
+let totalCaloriesEl;
+let yesBtn;
+let noBtn;
+let logoutDiv;
+let main_bdy=document.getElementById('main-bdy');
+let navLinks;
+let logFdBtn;
 let lastHash = null;
-setLogFoodButton()
+
+const userContent=`
+ <div class="header-wrap">
+    <h1>fittrack.</h1>
+    <nav class="main-nav">
+    <ul class="nav-list">
+      <li class="list-elem"><a href="#dashboard">DASHBOARD</a></li>
+      <li class="list-elem"><a href="#food/diary">FOOD</a></li>
+      <li class="list-elem"><a href="#">EXERCISE</a></li>
+      <li class="list-elem logout"><a href="#logout">LOGOUT</a></li>
+    </ul>
+  </nav>
+   
+  </div>
+
+  <div class="container">
+    <div id="center_header">
+     <h3>Hello, <span>Prasanth!</span></h3>
+     <div class="search-wrapper">
+     <input class="Search" type="text" placeholder="Search anything" />
+     </div>
+</div>
+    <div id="content"></div>
+    <button id="log-fd">Log Food</button>
+  </div>
+<div class="third-grid">
+<div class="profile-wrapper">
+  <div class="prfl-pic">
+    <img src="./imgs/pp_100x100.png" alt="">
+  </div>
+  <h4 class="prfl-name">Prasanth Buddiga</h4>
+  <img src="./imgs/notification icon.png" alt="">
+</div>
+<div id="calendar"></div>
+<div id="macro-calc" class="macro-dash"></div>
+</div>
+`;
+
+export function cacheDOMElements(){
+   form = document.getElementById('food-form');
+ foodList = document.getElementById('food-list');
+ totalCaloriesEl = document.getElementById('total-calories');
+ yesBtn=document.getElementById('yes_btn');
+ noBtn=document.getElementById('no_btn');
+ logoutDiv=document.getElementById('logout');
+ navLinks = document.querySelectorAll('.list-elem a');
+ logFdBtn=document.getElementById("log-fd");
+}
 
 function setLogFoodButton(){
   if(window.location.hash==='#dashboard') logFdBtn.style.display = 'none';
@@ -26,9 +72,6 @@ logFdBtn.innerHTML=isDiary?'Log Food':'Show Diary';
 
  } 
 }
-// renderFood(contentDiv);
-
-// console.log(contentDiv);
 
 let foodLog = [];
 
@@ -37,7 +80,14 @@ function handleRoute() {
   const hash = window.location.hash;
   
    console.log("Handling route for:", hash);
+   const isLoggedIn = !!localStorage.getItem("authToken");
+   const isLoginRoute = hash === "#login";
 
+   if (!isLoggedIn && !isLoginRoute) {
+    console.log("User not authenticated. Redirecting to login...");
+    window.location.hash = "#login";
+    return;
+  }
   if (hash === lastHash) {
     console.log("Same hash as last time, skipping...");
     return;
@@ -48,7 +98,6 @@ function handleRoute() {
     case "#dashboard":
     case "":
       renderDashboard(contentDiv);
-      
       hideCalendar();
       break;
     case "#food/diary":
@@ -72,20 +121,18 @@ function handleRoute() {
       renderLogout();
       hideCalendar();
       break;
+    case "#login":
+      setMainBdyHTML(loginPageHTML);
+       document.getElementById('login_btn').addEventListener('click',()=>{
+  login();
+})
+      // hideCalendar();
+      break;  
     default:
       renderNotFound();
   }
 }
-yesBtn.addEventListener('click',()=>{
-  logoutDiv.classList.add('hide');
-  window.location.hash="#dashboard";
-  document.body.style.overflowY = 'auto';
-});
-noBtn.addEventListener('click',()=>{
-  logoutDiv.classList.add('hide');
-  window.location.hash="#food/diary";
-  document.body.style.overflowY = 'auto';
-})
+
 window.addEventListener("hashchange", ()=>{
   console.log("Hash changed to:", window.location.hash);
   setLogFoodButton()
@@ -93,26 +140,49 @@ window.addEventListener("hashchange", ()=>{
 updateActiveLink();
 });
 window.addEventListener("DOMContentLoaded",()=>{
+  setMainBdyHTML(userContent);
   if (!window.location.hash) {
-      window.location.hash = '#dashboard';
+      window.location.hash = '#login';
     }
+    setTimeout(()=>{
+cacheDOMElements();
 initiateCalendar();
-handleRoute();
+handleRoute();  
 updateActiveLink();
-// document.getElementById('macro-calc').innerHTML=getMacroHTML();
+setLogFoodButton();
+attachEventListeners();
+},0)
+
 } );
 
+export function attachEventListeners(){
+  console.log("event listeners attached")
 logFdBtn.addEventListener('click',()=>{
   window.location.hash = isDiary ? "#food/add" : "#food/diary";
   isDiary=!isDiary;
 
+});
+yesBtn.addEventListener('click',()=>{
+  localStorage.removeItem("authToken");
+  logoutDiv.classList.add('hide');
+  window.location.hash="#login";
+  document.body.style.overflowY = 'auto';
+});
+noBtn.addEventListener('click',()=>{
+  logoutDiv.classList.add('hide');
+  window.location.hash="#dashboard";
+  document.body.style.overflowY = 'auto';
 })
+
+}
+
+
 // logoutbtn.addEventListener('click',(e)=>{
 //   // e.preventDefault();
 // logoutDiv.classList.remove('hide');
 // })
 
-function initiateCalendar(){
+export function initiateCalendar(){
   const selectedDateStr = sessionStorage.getItem('selectedDate');
   const selectedDate = selectedDateStr ? new Date(selectedDateStr) : new Date();
 
@@ -156,19 +226,6 @@ function renderExercise() {
   contentDiv.innerHTML = `This Exercise page is under construction.Please proceed to log food or track the workout progress`
 }
 
-//   e.preventDefault();
-
-//   const foodName = document.getElementById('food-name').value.trim();
-//   const calories = parseInt(document.getElementById('calories').value);
-
-//   if (foodName && !isNaN(calories)) {
-//     const entry = { food: foodName, calories };
-//     foodLog.push(entry);
-
-//     updateUI();
-//     form.reset();
-//   }
-// });
 
 function updateUI() {
   // Clear list
@@ -294,4 +351,8 @@ function showCalendar(){
 function renderLogout(){
   logoutDiv.classList.remove('hide');
   document.body.style.overflowY = 'hidden';
+}
+export function setMainBdyHTML(text){
+main_bdy.innerHTML=text;
+contentDiv = document.getElementById('content');
 }

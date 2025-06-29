@@ -1,0 +1,91 @@
+/* #loginPage{
+  box-sizing: border-box;
+  margin: auto;
+} */
+#first-half{
+  background-color: var(--primary-color);
+  margin-top: -10px;
+  width: calc(100vw);
+  height: 60vh;
+  
+}
+#loginFormCont{
+  margin-top: 4rem !important;
+  padding: 2rem 2rem;
+  z-index:9999;
+  background-color: white;
+  width: max-content;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  text-align: center;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  /* min-width: 400px; */
+  a{
+  display: block;
+    color: blue !important;
+    font-size: 0.7rem;
+    text-align: start;
+    /* margin-left: 6px; */
+    margin-top: -12px;
+}
+p{
+      font-size: 1.5rem;
+    font-weight: 500;
+}
+}
+input{
+    height: 1.5rem;
+    min-width: 250px;
+    padding: 8px 20px;
+    padding-right: 40px;
+    margin: auto;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    display: block;
+    border: 1px solid rgb(208, 205, 205);
+    border-radius: 5px;
+    /* width: -webkit-fill-available; */
+}
+
+.btn{
+  cursor: pointer;
+     display: flex;
+     justify-content: center;
+     align-items: center;  
+     text-align: center;
+     height: 2rem;
+     /* min-width: 300px; */
+    background-color: var(--primary-color);
+    border-radius: 3px;
+    /* padding: 6px 0px;
+     */
+     padding: 6px 20px;
+    color: white;
+    font-weight: 400;
+    margin-bottom: 0.6rem;
+    /* width: 100%; */
+    /* margin: auto; */
+    img{
+      height: 1.4rem;
+      width: 1.4rem;
+       margin-left: -5rem!important;
+       margin-top: 5px;
+    }
+    
+}
+.google_btn{
+  background-color: #cfcccc;
+    color: black;
+    padding: 6px 20px;
+}
+.fb_btn{
+  background-color: #1877F2;
+   padding: 6px 20px;
+   img{
+       margin-left: -4rem!important;
+       margin-top: 2px;
+    }
+}

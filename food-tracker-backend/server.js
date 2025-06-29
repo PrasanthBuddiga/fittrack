@@ -8,6 +8,10 @@ const OAuth = require('oauth-1.0a');
 const crypto = require('crypto');
 const { error } = require('console');
 
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const SECRET = 'mysecretkey';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const appID='b08494a7';   
@@ -17,6 +21,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const dataFilePath = path.join(__dirname, 'foodLog.json');
+const userFilePath = path.join(__dirname, 'users.json');
 const apiKey='ERzh7My4V8wvIKqSP7x8KDOd144hYVZL9hZeb64y';
 
 
@@ -113,8 +118,6 @@ catch(err){console.error(`Error fetching details for ${item.food_name}:`, err.me
 }
 // Read food log
 app.get('/api/food-log', (req, res) => {
-  
-
 try {
     const rawData = fs.readFileSync(dataFilePath,'utf-8');
    const data=rawData.trim() === '' ? [] : JSON.parse(rawData);
@@ -209,6 +212,40 @@ app.delete('/api/food-log',(req,res)=>{
   }
  
 })
+
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  const plainPassword = "123";
+bcrypt.hash(plainPassword, 10).then(hash => {
+  console.log("Generated hash:", hash);
+
+  // Compare the same password with generated hash
+  bcrypt.compare(plainPassword, hash).then(result => {
+    console.log("Match?", result); // This should print: Match? true
+  });
+});
+try {
+    const rawData = fs.readFileSync(userFilePath, 'utf-8');
+let data = { users: [] };
+try {
+  data = JSON.parse(rawData);
+} catch (err) {
+  console.error("Invalid JSON:", rawData);
+  throw err;
+}
+   const user = data.users.find(u => u.email === email);
+  if (!user) return res.status(401).json({ error: 'User not found' });
+  const isMatch = await bcrypt.compare(password, user.passwordHash);
+  if (!isMatch) return res.status(401).json({ error: 'Invalid password' });
+ const token = jwt.sign({ userId: user.id, email: user.email }, SECRET, { expiresIn: '1h' });
+ res.json({ token });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to read user data', details: err.message });
+  }
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
