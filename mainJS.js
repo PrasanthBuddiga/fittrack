@@ -1,7 +1,8 @@
 import { renderFood,updateSelectedDate,getSelectedDayLog,displayDayLog } from "./foodJS.js";
 import { renderAddFoodPage } from "./addFoodPage.js";
 import { renderDashboard,loadWeightTracker,loadNutrientProgress,loadCalorieTracker,renderMacroChart } from "./dashboard.js";
-import {loginPageHTML,login} from './loginPage.js';
+import {loginPageHTML,login,showSignUp} from './loginPage.js';
+import { API_BASE_URL } from "./config.js";
 
 export let isDiary=true;
 export let contentDiv = null;
@@ -76,18 +77,32 @@ logFdBtn.innerHTML=isDiary?'Log Food':'Show Diary';
 let foodLog = [];
 
 
-function handleRoute() {
+async function handleRoute() {
   const hash = window.location.hash;
+   const token = localStorage.getItem('authToken');
+   const publicRoutes = ['#login', '#signup'];
+   const protectedRoutes = ['#dashboard', '#food/diary', '#food/add', '#exercise'];
   
-   console.log("Handling route for:", hash);
-   const isLoggedIn = !!localStorage.getItem("authToken");
-   const isLoginRoute = hash === "#login";
+   if (!publicRoutes.includes(hash)) {
+    if (!token) {
+      window.location.hash = '#login';
+      return;
+    }
+  //  const isLoginRoute = hash === "#login";
 
-   if (!isLoggedIn && !isLoginRoute) {
-    console.log("User not authenticated. Redirecting to login...");
-    window.location.hash = "#login";
-    return;
+    const res = await fetch(`${API_BASE_URL}/api/verifyToken`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ token })
+    });
+    const result = await res.json();
+    if (!result.valid) {
+      localStorage.removeItem('authToken');
+      window.location.hash = '#login';
+      return;
+    }
   }
+
   if (hash === lastHash) {
     console.log("Same hash as last time, skipping...");
     return;
@@ -125,9 +140,12 @@ function handleRoute() {
       setMainBdyHTML(loginPageHTML);
        document.getElementById('login_btn').addEventListener('click',()=>{
   login();
+  
 })
-      // hideCalendar();
       break;  
+       case "#signup":
+       showSignUp();
+      break;
     default:
       renderNotFound();
   }
@@ -135,19 +153,19 @@ function handleRoute() {
 
 window.addEventListener("hashchange", ()=>{
   console.log("Hash changed to:", window.location.hash);
-  setLogFoodButton()
+  // setLogFoodButton()
   handleRoute();
 updateActiveLink();
 });
 window.addEventListener("DOMContentLoaded",()=>{
   setMainBdyHTML(userContent);
-  if (!window.location.hash) {
+  if (!window.location.hash||window.location.hash==="#signup") {
       window.location.hash = '#login';
     }
     setTimeout(()=>{
 cacheDOMElements();
 initiateCalendar();
-handleRoute();  
+handleRoute();
 updateActiveLink();
 setLogFoodButton();
 attachEventListeners();

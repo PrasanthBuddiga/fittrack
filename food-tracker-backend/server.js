@@ -239,12 +239,66 @@ try {
   const isMatch = await bcrypt.compare(password, user.passwordHash);
   if (!isMatch) return res.status(401).json({ error: 'Invalid password' });
  const token = jwt.sign({ userId: user.id, email: user.email }, SECRET, { expiresIn: '1h' });
+ user.token=token;
+ fs.writeFileSync(userFilePath, JSON.stringify(data, null, 2), 'utf-8');
  res.json({ token });
   } catch (err) {
     res.status(500).json({ error: 'Failed to read user data', details: err.message });
   }
 });
+app.post('/api/verifyToken', (req, res) => {
+  const { token } = req.body;
 
+  if (!token) return res.status(400).json({ error: 'Token missing' });
+
+  try {
+    const decoded = jwt.verify(token, SECRET);
+    res.status(200).json({ valid: true, user: decoded });
+  } catch (err) {
+    res.status(401).json({ valid: false, error: 'Invalid or expired token' });
+  }
+});
+
+app.post('/api/signup', async (req, res) => {
+  const { email, password } = req.body;
+
+  // Basic validation
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
+  try {
+    // Load existing users
+    const rawData = fs.readFileSync(userFilePath, 'utf-8');
+    const data = rawData.trim() === '' ? { users: [] } : JSON.parse(rawData);
+
+    // Check if user already exists
+    const existingUser = data.users.find(u => u.email === email);
+    if (existingUser) {
+      return res.status(409).json({ error: 'User already exists' });
+    }
+
+    // Hash password
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const newUser = {
+      id: Date.now(),
+      email,
+      passwordHash
+    };
+
+    data.users.push(newUser);
+
+    // Save to file
+    fs.writeFileSync(userFilePath, JSON.stringify(data, null, 2), 'utf-8');
+
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (err) {
+    console.error('Error during signup:', err);
+    res.status(500).json({ error: 'Internal server error', details: err.message });
+  }
+});
 
 
 app.listen(PORT, () => {

@@ -4,12 +4,14 @@
 } */
 #first-half{
   background-color: var(--primary-color);
+  color: var(--lighter-color);
   margin-top: -10px;
   width: calc(100vw);
   height: 60vh;
+  padding: 1rem;
   
 }
-#loginFormCont{
+#loginFormCont,#signUpFormCont{
   margin-top: 4rem !important;
   padding: 2rem 2rem;
   z-index:9999;
@@ -24,11 +26,9 @@
   box-shadow: 0 4px 16px rgba(0,0,0,0.05);
   /* min-width: 400px; */
   a{
-  display: block;
+  /* display: block; */
     color: blue !important;
     font-size: 0.7rem;
-    text-align: start;
-    /* margin-left: 6px; */
     margin-top: -12px;
 }
 p{
@@ -88,4 +88,14 @@ input{
        margin-left: -4rem!important;
        margin-top: 2px;
     }
+}
+#place_hldr,#place_hldr_s{
+      margin-bottom: 10px;
+    height: 1.5rem;
+    font-size: 0.8rem;
+    color: red;
+}
+#link_hldr{
+display: flex;
+justify-content: space-between;
 }

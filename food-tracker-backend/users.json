@@ -3,7 +3,20 @@
     {
       "id": 1,
       "email": "pbuddiga@gmail.com",
-      "passwordHash": "$2b$10$u7Qw1EH8r8B6ao/aMFupWuOiLa4mKAigvUysNPxUuvGzzYKbhrAZS"
+      "passwordHash": "$2b$10$u7Qw1EH8r8B6ao/aMFupWuOiLa4mKAigvUysNPxUuvGzzYKbhrAZS",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoicGJ1ZGRpZ2FAZ21haWwuY29tIiwiaWF0IjoxNzUxMTc2NjM0LCJleHAiOjE3NTExODAyMzR9.A7qF1ydpveYbfMNtfxYPu4Q-8790tf83GCRxQts3GZs"
+    },
+    {
+      "id": 1751178591059,
+      "email": "prasanthbuddiga@gmail.com",
+      "passwordHash": "$2b$10$OY7gINEU5KCxMI.Y6j6oLuIjBt6XubNBkBcg2bZpMR3h9.U7hf92O",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3NTExNzg1OTEwNTksImVtYWlsIjoicHJhc2FudGhidWRkaWdhQGdtYWlsLmNvbSIsImlhdCI6MTc1MTE4MDAwNiwiZXhwIjoxNzUxMTgzNjA2fQ.eH3pMkX1c1TqPwNljmedMwt8Gw_n4lLeVvcqrlZavSE"
+    },
+    {
+      "id": 1751180106513,
+      "email": "keerthi@gmail.com",
+      "passwordHash": "$2b$10$QpcdKHO52kAEHIpmvsWyl.bvj2wpU7PV2OBz.IbDIuJLBentcavhS",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjE3NTExODAxMDY1MTMsImVtYWlsIjoia2VlcnRoaUBnbWFpbC5jb20iLCJpYXQiOjE3NTExODAxMjMsImV4cCI6MTc1MTE4MzcyM30.0vvXM3RwGbzJZ6AJZQFwg88YVaNoqqXzqCxVdU-GIFc"
     }
   ]
 }
