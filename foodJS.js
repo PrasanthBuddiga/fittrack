@@ -112,7 +112,7 @@ export function displayDayLog(){
                         <span>C:${dayLog[log].carbs} gms</span>
                         <span>F:${dayLog[log].fats} gms</span>
                         <p>${dayLog[log].calories} kcal</p>
-                        <span class='remove material-icons' log-id="${dayLog[log].foodId}">delete</span>
+                        <span class='remove material-icons' log-id="${dayLog[log].id}">delete</span>
                       </div>
        </div>`
    }
