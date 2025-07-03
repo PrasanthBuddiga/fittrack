@@ -151,7 +151,7 @@ const output = {
 };
     console.log('Adding food to diary:', output);
     const response = await postFoodToDayLog(output);
-    if (response?.id) {
+    if (response?.message==='Food log inserted successfully') {
       showSpinner();
     setTimeout(()=>{hideSpinner()},2000);
     window.location.hash="#food/diary";
@@ -196,6 +196,7 @@ document.querySelectorAll('.matched-item').forEach(item=>{
 
 async function postFoodToDayLog(output){
   const url=`${API_BASE_URL}/api/food-log`;
+  const token=localStorage.getItem('authToken');
 
   try{
     console.log('sending the date ', formattedDate);
@@ -203,7 +204,8 @@ async function postFoodToDayLog(output){
   const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({date:truncatedDate,entry:output})
     });

@@ -3,6 +3,7 @@ import { renderAddFoodPage } from "./addFoodPage.js";
 import { renderDashboard,loadWeightTracker,loadNutrientProgress,loadCalorieTracker,renderMacroChart } from "./dashboard.js";
 import {loginPageHTML,login,showSignUp} from './loginPage.js';
 import { API_BASE_URL } from "./config.js";
+import {userContent} from "./loginPage.js";
 
 export let isDiary=true;
 export let contentDiv = null;
@@ -17,42 +18,42 @@ let navLinks;
 let logFdBtn;
 let lastHash = null;
 
-const userContent=`
- <div class="header-wrap">
-    <h1>fittrack.</h1>
-    <nav class="main-nav">
-    <ul class="nav-list">
-      <li class="list-elem"><a href="#dashboard">DASHBOARD</a></li>
-      <li class="list-elem"><a href="#food/diary">FOOD</a></li>
-      <li class="list-elem"><a href="#">EXERCISE</a></li>
-      <li class="list-elem logout"><a href="#logout">LOGOUT</a></li>
-    </ul>
-  </nav>
+// const userContent=`
+//  <div class="header-wrap">
+//     <h1>fittrack.</h1>
+//     <nav class="main-nav">
+//     <ul class="nav-list">
+//       <li class="list-elem"><a href="#dashboard">DASHBOARD</a></li>
+//       <li class="list-elem"><a href="#food/diary">FOOD</a></li>
+//       <li class="list-elem"><a href="#">EXERCISE</a></li>
+//       <li class="list-elem logout"><a href="#logout">LOGOUT</a></li>
+//     </ul>
+//   </nav>
    
-  </div>
+//   </div>
 
-  <div class="container">
-    <div id="center_header">
-     <h3>Hello, <span>Prasanth!</span></h3>
-     <div class="search-wrapper">
-     <input class="Search" type="text" placeholder="Search anything" />
-     </div>
-</div>
-    <div id="content"></div>
-    <button id="log-fd">Log Food</button>
-  </div>
-<div class="third-grid">
-<div class="profile-wrapper">
-  <div class="prfl-pic">
-    <img src="./imgs/pp_100x100.png" alt="">
-  </div>
-  <h4 class="prfl-name">Prasanth Buddiga</h4>
-  <img src="./imgs/notification icon.png" alt="">
-</div>
-<div id="calendar"></div>
-<div id="macro-calc" class="macro-dash"></div>
-</div>
-`;
+//   <div class="container">
+//     <div id="center_header">
+//      <h3>Hello, <span>Prasanth!</span></h3>
+//      <div class="search-wrapper">
+//      <input class="Search" type="text" placeholder="Search anything" />
+//      </div>
+// </div>
+//     <div id="content"></div>
+//     <button id="log-fd">Log Food</button>
+//   </div>
+// <div class="third-grid">
+// <div class="profile-wrapper">
+//   <div class="prfl-pic">
+//     <img src="./imgs/pp_100x100.png" alt="">
+//   </div>
+//   <h4 class="prfl-name">Prasanth Buddiga</h4>
+//   <img src="./imgs/notification icon.png" alt="">
+// </div>
+// <div id="calendar"></div>
+// <div id="macro-calc" class="macro-dash"></div>
+// </div>
+// `;
 
 export function cacheDOMElements(){
    form = document.getElementById('food-form');
@@ -182,6 +183,7 @@ logFdBtn.addEventListener('click',()=>{
 });
 yesBtn.addEventListener('click',()=>{
   localStorage.removeItem("authToken");
+   localStorage.removeItem("userName");
   logoutDiv.classList.add('hide');
   window.location.hash="#login";
   document.body.style.overflowY = 'auto';

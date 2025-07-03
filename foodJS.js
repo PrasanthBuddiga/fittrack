@@ -68,19 +68,25 @@ export function updateSelectedDate(selectedDate) {
 
  async function  fetchFoodList(){
   showSpinner();
-  await fetch(`${API_BASE_URL}/api/food-log`)
-  .then(res=>{if(!res.ok) throw new Error("Failed to fetch Data");return res.json()})
-  .then(data=>{
-     foodDiary=data;
+  const token = localStorage.getItem('authToken');
+  const res=await fetch(`${API_BASE_URL}/api/food-log`,{
+    method:'GET',
+    headers:{
+      'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+    }
+  })
+  if(!res.ok) throw new Error("Failed to fetch Data");
+  // return res.json()
+     foodDiary= await res.json();
      getSelectedDayLog();
      displayDayLog();
-  })
-  .catch(err=>{console.log("Error fetching Data:", err)})
-  .finally (()=>hideSpinner())
+     hideSpinner();
 }
 export function getSelectedDayLog(){
   dayLog='';
   let truncatedDate=formattedDate.split("y,")[1].slice(1);
+  console.log("foodList", foodDiary)
   if (!foodDiary || !foodDiary.foodList || foodDiary.foodList.length === 0) return;
   else {
   foodDiary.foodList.forEach(element => {
@@ -106,7 +112,7 @@ export function displayDayLog(){
                         <span>C:${dayLog[log].carbs} gms</span>
                         <span>F:${dayLog[log].fats} gms</span>
                         <p>${dayLog[log].calories} kcal</p>
-                        <span class='remove material-icons' log-id="${dayLog[log].id}">delete</span>
+                        <span class='remove material-icons' log-id="${dayLog[log].foodId}">delete</span>
                       </div>
        </div>`
    }
@@ -114,6 +120,7 @@ export function displayDayLog(){
   else foodLogContainer.innerHTML=`<p>No Food Logged for the day!</p>`
 }
 async function removeLog(logIndex){
+  const token=localStorage.getItem('authToken');
 //  dayLog.splice(logIndex, 1);
 const url=`${API_BASE_URL}/api/food-log`;
 let truncatedDate=formattedDate.split("y,")[1].slice(1);
@@ -121,7 +128,8 @@ let truncatedDate=formattedDate.split("y,")[1].slice(1);
  const response = await fetch(url, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+         'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({date:truncatedDate,id:logIndex})
     });

@@ -2,7 +2,7 @@ import { API_BASE_URL } from "./config.js";
 
 import {setMainBdyHTML,cacheDOMElements,initiateCalendar,attachEventListeners} from './mainJS.js'
 
-const userContent=`
+export const userContent=`
  <div class="header-wrap">
     <h1>fittrack.</h1>
     <nav class="main-nav">
@@ -16,7 +16,7 @@ const userContent=`
   </div>
   <div class="container">
     <div id="center_header">
-     <h3>Hello, <span>Prasanth!</span></h3>
+     <h3>Welcome back, <span id="userName"></span></h3>
      <div class="search-wrapper">
      <input class="Search" type="text" placeholder="Search anything" />
      </div>
@@ -29,8 +29,8 @@ const userContent=`
   <div class="prfl-pic">
     <img src="./imgs/pp_100x100.png" alt="">
   </div>
-  <h4 class="prfl-name">Prasanth Buddiga</h4>
-  <img src="./imgs/notification icon.png" alt="">
+  <h4 id="prfl-name"></h4>
+  
 </div>
 <div id="calendar"></div>
 <div id="macro-calc" class="macro-dash"></div>
@@ -56,6 +56,7 @@ export const loginPageHTML=`
   </div>
   <div id="signUpFormCont" class="hide">
       <p>MEMBER SIGN-IN</p>
+      <input id='userName_s' type="text" placeholder="Enter a user name" />
       <input id='emailID_s' type="email" placeholder="Enter email address" />
       <input id='password_s' type="password" placeholder="Enter password" />
       <input id='re-enter_password_s' type="password" placeholder="Re-enter password" />
@@ -82,9 +83,13 @@ const response=await fetch(url, {
     })
 const result = await response.json();
 if (response.status === 200) {
+  console.log("logged in User", result);
     // Now render the full app layout before changing the hash
     localStorage.setItem('authToken',result.token);
+    localStorage.setItem('userName',result.userName);
     setMainBdyHTML(userContent); // load layout
+    document.getElementById("userName").innerHTML=result.userName + "!";
+    document.getElementById("prfl-name").innerHTML=result.userName ;
     setTimeout(() => {
       cacheDOMElements();
       initiateCalendar();
@@ -102,7 +107,8 @@ export function showSignUp(){
   document.getElementById('signUpFormCont').classList.remove('hide');
   document.getElementById('signup_btn').addEventListener('click',()=>{signup();}  )
 }
-const signup = async () => {
+async function signup  ()  {
+  const userName=document.getElementById("userName_s").value.trim();
   const email = document.getElementById("emailID_s").value.trim();
   const password = document.getElementById("password_s").value.trim();
 
@@ -111,7 +117,7 @@ const signup = async () => {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ email, password,userName })
   });
 
   const result = await response.json();

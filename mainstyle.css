@@ -156,9 +156,10 @@ padding: 6px 12px;
 .profile-wrapper{
 display: flex;
 align-items: center;
-
 gap: 10px;
 padding: 0px 10px;
+width: 100%;
+
 }
 .prfl-pic{
   background-color: var(--secondary-color);
@@ -171,8 +172,11 @@ padding: 0px 10px;
   object-position:top;
   }
 }
-.prfl-name{
+#prfl-name{
   margin-right: 15px;
+}
+#prfl-name + img{
+  justify-self: flex-end;
 }
 .modal {
   display: flex;

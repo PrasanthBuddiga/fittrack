@@ -1,3 +1,4 @@
+const { connectToMongo, getUsersCollection, getUserFoodLog } = require('./mongoClient.js');
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -117,15 +118,24 @@ catch(err){console.error(`Error fetching details for ${item.food_name}:`, err.me
   }
 }
 // Read food log
-app.get('/api/food-log', (req, res) => {
-try {
-    const rawData = fs.readFileSync(dataFilePath,'utf-8');
-   const data=rawData.trim() === '' ? [] : JSON.parse(rawData);
-   res.status(200).json(data)
+app.get('/api/food-log', async (req, res) => {
+// try {
+//     const rawData = fs.readFileSync(dataFilePath,'utf-8');
+//    const data=rawData.trim() === '' ? [] : JSON.parse(rawData);
+//    res.status(200).json(data)
+//   } catch (err) {
+//     res.status(500).json({ error: 'Failed to read log file', details: err.message });
+//   }
+const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Missing token' });
+   try {
+    const decoded = jwt.verify(token, SECRET); // Make sure SECRET matches your jwt.sign
+    let foodLogCollection=getUserFoodLog();
+    const logs = await foodLogCollection.find({ id: decoded.userId }).toArray();
+    res.status(200).json({foodList:logs});
   } catch (err) {
-    res.status(500).json({ error: 'Failed to read log file', details: err.message });
+    res.status(500).json({ error: 'Failed to fetch food logs', details: err.message });
   }
-  
 });
 
 //fetch food details from usda API - no auth 
@@ -155,96 +165,159 @@ app.get('/api/ntrx/search',async(req,res)=>{
 })
 
 // Add new log
-app.post('/api/food-log', (req, res) => {
+app.post('/api/food-log', async (req, res) => {
   const { date, entry } = req.body;
+  const token = req.headers.authorization?.split(' ')[1];
+  if(!token) return res.status(400).json({message:'Missing token'});
   if (!date || !entry) {
     return res.status(400).json({ message: 'Missing date or food log entry' });
   }
-
-  try {
-    const rawData = fs.readFileSync(dataFilePath);
-    const data = JSON.parse(rawData);
-    const existingDataEntry=data.foodList.find(entry=>entry.Date === date);
-    const newID='LogId_'+Date.now();
-    if(existingDataEntry){
-       existingDataEntry.foodLog.push({id:newID,...entry})
-    }
-    else {
-      data.foodList.push({
-        Date:date,
-        foodLog:[{id:newID,...entry}]
-      })
-    }
-
-    fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2));
-    res.status(201).json({ message: 'Entry added', id: newID });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to write to log file' });
+  try{
+    const decoded=jwt.verify(token,SECRET);
+    const userId=decoded.userId;
+    const userLog=getUserFoodLog();
+    const result=await userLog.updateOne({id:userId,Date:date},{$push:{foodLog:entry}});
+    if (result.modifiedCount === 0) {
+      const newDoc = {
+        id: userId,
+        Date: date,
+        foodLog: [{id:'LogId_'+Date.now(),...entry}],
+      }
+    await userLog.insertOne(newDoc);
+  };
+    res.status(201).json({message:'Food log inserted successfully',foodLog:await userLog.findOne({id:userId,Date:date})});
+  }catch(err){
+    res.status(500).json({message:'Internal Server error', error:err.message});
   }
+
+  // try {
+  //   const rawData = fs.readFileSync(dataFilePath);
+  //   const data = JSON.parse(rawData);
+  //   const existingDataEntry=data.foodList.find(entry=>entry.Date === date);
+  //   const newID='LogId_'+Date.now();
+  //   if(existingDataEntry){
+  //      existingDataEntry.foodLog.push({id:newID,...entry})
+  //   }
+  //   else {
+  //     data.foodList.push({
+  //       Date:date,
+  //       foodLog:[{id:newID,...entry}]
+  //     })
+  //   }
+
+  //   fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2));
+  //   res.status(201).json({ message: 'Entry added', id: newID });
+  // } catch (err) {
+  //   res.status(500).json({ error: 'Failed to write to log file' });
+  // }
 });
 
-app.delete('/api/food-log',(req,res)=>{
+app.delete('/api/food-log', async (req,res)=>{
 
   const {date,id}=req.body;
-  try {
-    const rawData = fs.readFileSync(dataFilePath,'utf-8');
-   const data=rawData.trim() === '' ? [] : JSON.parse(rawData);
-   
-    const dateEntry = data.foodList.find(entry => entry.Date === date);
-   
-  if (!dateEntry) {
-    return res.status(404).json({ error: 'no data for the entered Date' });
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'Missing token' });
+  if (!id || !date) return res.status(400).json({ error: 'Missing foodId or date' });
+  
+   try{ const decoded=jwt.verify(token,SECRET);
+    const userId=decoded.userId;
+    let userLog=getUserFoodLog();
+    const result=await userLog.updateOne({id:userId,Date:date},{$pull:{foodLog:{foodId:id}}});
+  if(result.modifiedCount===0){
+    return res.status(404).json({error:'Log already deleted'});
   }
+ res.status(200).json({message:'Food lod deleted successfully'});
+}catch(err){
+  console.error('Error deleting food log:',err);
+  res.status(500).json({error:'Internal Server error',details:err.message});
+}
+  // try {
+  //   const rawData = fs.readFileSync(dataFilePath,'utf-8');
+  //  const data=rawData.trim() === '' ? [] : JSON.parse(rawData);
    
-  const logIndex = dateEntry.foodLog.findIndex(log => log.id === id);
-  console.log("dateFromQuery:",logIndex);
-  if (logIndex === -1) {
-    return res.status(404).json({ error: 'Log ID not found' });
-  }
-  dateEntry.foodLog.splice(logIndex, 1);
-  if (dateEntry.foodLog.length === 0) {
-      data.foodList = data.foodList.filter(entry => entry.Date !== date);
-    }
-    fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2), 'utf-8');
-  res.status(200).json({ message: 'Log deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ error: 'No Data to Delete', details: err.message });
-  }
- 
-})
+  //   const dateEntry = data.foodList.find(entry => entry.Date === date);
+   
+  // if (!dateEntry) {
+  //   return res.status(404).json({ error: 'no data for the entered Date' });
+  // }
+   
+  // const logIndex = dateEntry.foodLog.findIndex(log => log.id === id);
+  // console.log("dateFromQuery:",logIndex);
+  // if (logIndex === -1) {
+  //   return res.status(404).json({ error: 'Log ID not found' });
+  // }
+  // dateEntry.foodLog.splice(logIndex, 1);
+  // if (dateEntry.foodLog.length === 0) {
+  //     data.foodList = data.foodList.filter(entry => entry.Date !== date);
+  //   }
+  //   fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2), 'utf-8');
+  // res.status(200).json({ message: 'Log deleted successfully' });
+  // } catch (err) {
+  //   res.status(500).json({ error: 'No Data to Delete', details: err.message });
+  // }
+  
+});
 
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-
-  const plainPassword = "123";
-bcrypt.hash(plainPassword, 10).then(hash => {
-  console.log("Generated hash:", hash);
-
-  // Compare the same password with generated hash
-  bcrypt.compare(plainPassword, hash).then(result => {
-    console.log("Match?", result); // This should print: Match? true
-  });
-});
-try {
-    const rawData = fs.readFileSync(userFilePath, 'utf-8');
-let data = { users: [] };
-try {
-  data = JSON.parse(rawData);
-} catch (err) {
-  console.error("Invalid JSON:", rawData);
-  throw err;
-}
-   const user = data.users.find(u => u.email === email);
-  if (!user) return res.status(401).json({ error: 'User not found' });
-  const isMatch = await bcrypt.compare(password, user.passwordHash);
-  if (!isMatch) return res.status(401).json({ error: 'Invalid password' });
- const token = jwt.sign({ userId: user.id, email: user.email }, SECRET, { expiresIn: '1h' });
- user.token=token;
- fs.writeFileSync(userFilePath, JSON.stringify(data, null, 2), 'utf-8');
- res.json({ token });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to read user data', details: err.message });
+  const users = getUsersCollection();
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password required' });
   }
+  try {
+    const user = await users.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
+    const token = jwt.sign({ userId: user.id, email: user.email }, SECRET, { expiresIn: '1h' });
+
+    // Optionally store token if you're tracking sessions
+    await users.updateOne({ email }, { $set: { token } });
+    const userName=user.userName;
+    res.json({ token, userName});
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
+//   --------------------------------------
+//   --------------------------------------
+//   const plainPassword = "123";
+// bcrypt.hash(plainPassword, 10).then(hash => {
+//   console.log("Generated hash:", hash);
+  // Compare the same password with generated hash
+//   bcrypt.compare(plainPassword, hash).then(result => {
+//     console.log("Match?", result); // This should print: Match? true
+//   });
+// });
+
+//   ------------------------------------------
+//   ------------------------------------------
+// try {
+//     const rawData = fs.readFileSync(userFilePath, 'utf-8');
+// let data = { users: [] };
+// try {
+//   data = JSON.parse(rawData);
+// } catch (err) {
+//   console.error("Invalid JSON:", rawData);
+//   throw err;
+// }
+//    const user = data.users.find(u => u.email === email);
+//   if (!user) return res.status(401).json({ error: 'User not found' });
+//   const isMatch = await bcrypt.compare(password, user.passwordHash);
+//   if (!isMatch) return res.status(401).json({ error: 'Invalid password' });
+//  const token = jwt.sign({ userId: user.id, email: user.email }, SECRET, { expiresIn: '1h' });
+//  user.token=token;
+//  fs.writeFileSync(userFilePath, JSON.stringify(data, null, 2), 'utf-8');
+//  res.json({ token });
+//   } catch (err) {
+//     res.status(500).json({ error: 'Failed to read user data', details: err.message });
+//   }
 });
 app.post('/api/verifyToken', (req, res) => {
   const { token } = req.body;
@@ -260,47 +333,67 @@ app.post('/api/verifyToken', (req, res) => {
 });
 
 app.post('/api/signup', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password,userName } = req.body;
+  const users = getUsersCollection();
 
   // Basic validation
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required' });
+  if (!email || !password || !userName ) {
+    return res.status(400).json({ error: 'Email , password and name are required' });
   }
+  const existingEmail = await users.findOne({ email });
+  if (existingEmail) return res.status(409).json({ error: 'Email already exists' });
 
-  try {
-    // Load existing users
-    const rawData = fs.readFileSync(userFilePath, 'utf-8');
-    const data = rawData.trim() === '' ? { users: [] } : JSON.parse(rawData);
+  const passwordHash = await bcrypt.hash(password, 10);
+  const newUser = {
+    id: String(Date.now()),
+    userName,
+    email,
+    passwordHash,
+  };
 
-    // Check if user already exists
-    const existingUser = data.users.find(u => u.email === email);
-    if (existingUser) {
-      return res.status(409).json({ error: 'User already exists' });
-    }
+  await users.insertOne(newUser);
+  res.status(201).json({ message: 'User created' });
 
-    // Hash password
-    const passwordHash = await bcrypt.hash(password, 10);
+  // try {
+  //   // Load existing users
+  //   const rawData = fs.readFileSync(userFilePath, 'utf-8');
+  //   const data = rawData.trim() === '' ? { users: [] } : JSON.parse(rawData);
 
-    // Create new user
-    const newUser = {
-      id: Date.now(),
-      email,
-      passwordHash
-    };
+  //   // Check if user already exists
+  //   const existingUser = data.users.find(u => u.email === email);
+  //   if (existingUser) {
+  //     return res.status(409).json({ error: 'User already exists' });
+  //   }
 
-    data.users.push(newUser);
+  //   // Hash password
+  //   const passwordHash = await bcrypt.hash(password, 10);
 
-    // Save to file
-    fs.writeFileSync(userFilePath, JSON.stringify(data, null, 2), 'utf-8');
+  //   // Create new user
+  //   const newUser = {
+  //     id: Date.now(),
+  //     email,
+  //     passwordHash
+  //   };
 
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (err) {
-    console.error('Error during signup:', err);
-    res.status(500).json({ error: 'Internal server error', details: err.message });
-  }
+  //   data.users.push(newUser);
+
+  //   // Save to file
+  //   fs.writeFileSync(userFilePath, JSON.stringify(data, null, 2), 'utf-8');
+
+  //   res.status(201).json({ message: 'User registered successfully' });
+  // } catch (err) {
+  //   console.error('Error during signup:', err);
+  //   res.status(500).json({ error: 'Internal server error', details: err.message });
+  // }
+
 });
 
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// app.listen(PORT, () => {
+//   console.log(`Server running on http://localhost:${PORT}`);
+// });
+connectToMongo().then(() => {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running at http://localhost:${PORT}`);
+  });
+}).catch(console.error);

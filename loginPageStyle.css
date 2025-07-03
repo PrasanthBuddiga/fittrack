@@ -35,7 +35,6 @@ p{
       font-size: 1.5rem;
     font-weight: 500;
 }
-}
 input{
     height: 1.5rem;
     min-width: 250px;
@@ -49,6 +48,8 @@ input{
     border-radius: 5px;
     /* width: -webkit-fill-available; */
 }
+}
+
 
 .btn{
   cursor: pointer;
