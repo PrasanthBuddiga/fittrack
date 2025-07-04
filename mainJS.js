@@ -160,6 +160,8 @@ updateActiveLink();
 });
 window.addEventListener("DOMContentLoaded",()=>{
   setMainBdyHTML(userContent);
+  document.getElementById("userName").innerHTML=localStorage.getItem('userName') + "!";
+    document.getElementById("prfl-name").innerHTML=localStorage.getItem('userName') ;
   if (!window.location.hash||window.location.hash==="#signup") {
       window.location.hash = '#login';
     }

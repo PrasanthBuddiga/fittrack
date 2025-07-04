@@ -176,12 +176,12 @@ app.post('/api/food-log', async (req, res) => {
     const decoded=jwt.verify(token,SECRET);
     const userId=decoded.userId;
     const userLog=getUserFoodLog();
-    const result=await userLog.updateOne({id:userId,Date:date},{$push:{foodLog:entry}});
+    const result=await userLog.updateOne({id:userId,Date:date},{$push:{foodLog:{foodId:'LogId_'+Date.now(),...entry}}});
     if (result.modifiedCount === 0) {
       const newDoc = {
         id: userId,
         Date: date,
-        foodLog: [{id:'LogId_'+Date.now(),...entry}],
+        foodLog: [{foodId:'LogId_'+Date.now(),...entry}],
       }
     await userLog.insertOne(newDoc);
   };
