@@ -9,7 +9,10 @@
   max-width: 250px;
   min-height: 250px;
   position: relative;
- box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+ box-shadow:
+  0 2px 4px rgba(0, 0, 0, 0.08),
+  0 6px 12px rgba(0, 0, 0, 0.12);
+;
  h3,h4{
   margin-bottom: 0px;
  }
@@ -18,7 +21,8 @@
   position: relative;
   background-color: #fff;
   border-radius: 6px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  /* box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); */
+  font-size: 1.3rem!important;
   /* padding: 1.5rem; */
   /* flex-basis: 25%; */
 }
@@ -29,11 +33,12 @@
   border-radius: 5px;
   min-width: 84%;
   position: relative;
-  overflow-y: auto;
+  overflow-y: visible;
  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
  h3,h4,h2{
   text-align: center;
   margin-bottom: 0px;
+  
  }
 }
 .input-wrap{
@@ -262,7 +267,7 @@ select{
 .wide-dash {
   grid-column: span 2;
   /* width: 100%; */
-  max-width: calc(500px + 2rem);
+  max-width: calc(500px + 3rem);
   min-width: calc(470px);
 }
 #weeklyCalorieChart{
@@ -272,7 +277,9 @@ select{
   font-size: 2rem!important;
 }
 #macro-calc{
-  background-color: var(--secondary-color);
+  /* background-color: var(--secondary-color);
+   */
+   background-color: #E6F2E6;
   height: 400px;
-  margin-top: 10px;
+  margin-top: 2.5rem;
 }

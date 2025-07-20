@@ -4,19 +4,20 @@ import {setMainBdyHTML,cacheDOMElements,initiateCalendar,attachEventListeners} f
 
 export const userContent=`
  <div class="header-wrap">
-    <h1>fittrack.</h1>
+    <h1>fittrack <span>.</span></h1>
     <nav class="main-nav">
     <ul class="nav-list">
       <li class="list-elem"><a href="#dashboard">DASHBOARD</a></li>
       <li class="list-elem"><a href="#food/diary">FOOD</a></li>
       <li class="list-elem"><a href="#">EXERCISE</a></li>
+      <li class="list-elem profile"><a href="#profile">PROFILE</a></li>
       <li class="list-elem logout"><a href="#logout">LOGOUT</a></li>
     </ul>
   </nav>
   </div>
   <div class="container">
     <div id="center_header">
-     <h3>Welcome back, <span id="userName"></span></h3>
+     <h3 id='Welcome_quote'>Good Evening, <span id="userName"></span></h3>
      <div class="search-wrapper">
      <input class="Search" type="text" placeholder="Search anything" />
      </div>
@@ -33,7 +34,10 @@ export const userContent=`
   
 </div>
 <div id="calendar"></div>
-<div id="macro-calc" class="macro-dash"></div>
+<div id="macro-calc" class="macro-dash">
+  <img id="chef_img" src="./imgs/Chef_Hat.png">
+  <p id="recipe_txt">Delicious healthy recipes coming soon..</p>
+</div>
 </div>
 `;
 export const loginPageHTML=`
@@ -87,6 +91,7 @@ if (response.status === 200) {
     // Now render the full app layout before changing the hash
     localStorage.setItem('authToken',result.token);
     localStorage.setItem('userName',result.userName);
+    localStorage.setItem('user',JSON.stringify(result))
     setMainBdyHTML(userContent); // load layout
     document.getElementById("userName").innerHTML=result.userName + "!";
     document.getElementById("prfl-name").innerHTML=result.userName ;
@@ -126,7 +131,7 @@ async function signup  ()  {
     alert("Signup successful! Please login.");
     window.location.hash = "#login";
   } else {
-    alert(result.error || "Signup failed");
+   console.log(result.error || "Signup failed");
   }
   
 };

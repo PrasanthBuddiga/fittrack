@@ -4,6 +4,7 @@ import { renderDashboard,loadWeightTracker,loadNutrientProgress,loadCalorieTrack
 import {loginPageHTML,login,showSignUp} from './loginPage.js';
 import { API_BASE_URL } from "./config.js";
 import {userContent} from "./loginPage.js";
+import { renderProfilePage, renderProfilePage1 } from "./profilePage.js";
 
 export let isDiary=true;
 export let contentDiv = null;
@@ -83,7 +84,7 @@ async function handleRoute() {
    const token = localStorage.getItem('authToken');
    const publicRoutes = ['#login', '#signup'];
    const protectedRoutes = ['#dashboard', '#food/diary', '#food/add', '#exercise'];
-  
+   if(protectedRoutes.includes(hash)){document.getElementById('log-fd').classList.remove('hide');}
    if (!publicRoutes.includes(hash)) {
     if (!token) {
       window.location.hash = '#login';
@@ -141,11 +142,14 @@ async function handleRoute() {
       setMainBdyHTML(loginPageHTML);
        document.getElementById('login_btn').addEventListener('click',()=>{
   login();
-  
 })
       break;  
-       case "#signup":
+      case "#signup":
        showSignUp();
+      break;
+    case "#profile":
+       renderProfilePage1();
+       showCalendar();
       break;
     default:
       renderNotFound();
@@ -186,6 +190,8 @@ logFdBtn.addEventListener('click',()=>{
 yesBtn.addEventListener('click',()=>{
   localStorage.removeItem("authToken");
    localStorage.removeItem("userName");
+   sessionStorage.removeItem("selectedDate");
+   localStorage.removeItem("user");
   logoutDiv.classList.add('hide');
   window.location.hash="#login";
   document.body.style.overflowY = 'auto';
@@ -195,7 +201,9 @@ noBtn.addEventListener('click',()=>{
   window.location.hash="#dashboard";
   document.body.style.overflowY = 'auto';
 })
-
+document.getElementById("prfl-name").addEventListener('click',()=>{
+  window.location.hash="#profile"
+})
 }
 
 

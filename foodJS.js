@@ -145,3 +145,17 @@ let truncatedDate=formattedDate.split("y,")[1].slice(1);
   }
 
 }
+
+export async function getLogByDay(givenDay) {
+  const url=`${API_BASE_URL}/api/DayLog`;
+  const token=localStorage.getItem('authToken');
+  const response=await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({date:givenDay})
+    });
+  return response.json();
+}

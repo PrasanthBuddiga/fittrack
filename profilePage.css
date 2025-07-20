@@ -1,0 +1,154 @@
+.profile-container {
+  background-color: #fff;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  padding: 2rem;
+  width: 80%;
+  margin: auto;
+
+}
+.edit-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.4rem 0.6rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  max-width: 160px;
+  transition: border-color 0.3s ease;
+}
+
+#error_msg {
+  text-align: center;
+  color: #e63946;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.profile-container h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #222;
+}
+/* .profile-container::before {
+content: 'Edit your profile';
+position: relative;
+top: -60px;
+left: -20px;
+font-size: 1.3rem;
+
+} */
+
+.profile-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: auto;
+  padding: 0.75rem 1.5rem; 
+  border-bottom: 1px solid #f0f0f0;
+  background-color: var(--secondary-light-color);
+}
+
+
+.profile-field:last-child {
+  border-bottom: none;
+}
+
+.profile-field label {
+  font-weight: 500;
+  text-align: right;
+  color: #333;
+  font-size: 0.95rem;
+   flex: 1;
+  min-width: 100px;
+  text-align: left;
+}
+
+.profile-field .value,
+.profile-field .edit-input {
+  font-size: 0.8rem;
+  color: #5e5d5df0;
+  /* flex: 2; */
+}
+
+
+
+.edit-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+button:hover {
+  color: #111;
+}
+
+.edit-btn {
+  color: #888;
+}
+
+.save-btn {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.cancel-btn {
+  color: var(--secondary-color);
+  font-weight: bold;
+}
+
+.hide {
+  display: none;
+}
+#profile-cont{
+  background-color: white;
+  padding: 2rem 1rem;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  gap: 3rem;
+  h3{
+    font-size: 1rem!important;
+  }
+}
+#prfl-img{
+   min-height: 300px;
+   min-width: 300px;
+   background-color: #33333318;
+   flex: 1;
+}
+#profile-info{
+   padding: 0rem 2rem;
+   flex: 2;
+}
+#edit_header{
+width: 80%; /* should match the width of prof container */
+margin: auto;
+display: flex;
+/* background-color: white; */
+justify-content: space-between;
+padding: 1rem;
+margin-bottom: -20px;
+gap:3rem;
+
+button{
+  font-size: 0.7rem;
+  color: white;
+}
+
+}

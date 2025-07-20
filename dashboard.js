@@ -1,7 +1,17 @@
 
-export function renderDashboard(contentDiv) {
+import { getLogByDay } from "./foodJS.js";
+let totalCalories=0;
+  let totalProtein=0;
+  let totalCarbs=0;
+  let totalFats=0;
+export async function renderDashboard(contentDiv) {
   // const macroCalc = getMacroHTML();
-
+  const dayLog=await getCurrentDaysLog();
+  
+   totalCalories=0;
+   totalProtein=0;
+   totalCarbs=0;
+   totalFats=0;
   const dashboardContent = `
     <div class='dash-grid'>
       <div class='dash weight-tracker'>
@@ -43,18 +53,26 @@ export function renderDashboard(contentDiv) {
     </div>
   `;
 contentDiv.innerHTML=dashboardContent;
+ dayLog.dayLog?.foodLog?.forEach(element => {
+    totalCalories+=Number(element.calories);
+    totalCarbs+=Number(element.carbs);
+    totalFats+=Number(element.fats);
+    totalProtein+=Number(element.protein);
+  });
 loadWeightTracker();
       // loadNutrientProgress();
       renderMacroChart();
       loadCalorieTracker();
       renderWeeklyCaloriesChart();
+     
+  console.log(totalCalories,totalCarbs,totalFats,totalProtein);
 }
 
 export function loadWeightTracker(){
-
-const currentWeight = 100;
-const targetWeight = 65;
-const maxWeight = 120;
+const userInfo=JSON.parse(localStorage.getItem('user'));
+const currentWeight = userInfo.weight; 
+const targetWeight = userInfo.targetWeight;;
+const maxWeight = 85;
 
 const progressValue = currentWeight - targetWeight;
 const totalRange = maxWeight - targetWeight;
@@ -155,9 +173,13 @@ export function loadNutrientProgress(){
 
 export function loadCalorieTracker(){
 
+  const userInfo=JSON.parse(localStorage.getItem('user'));
+
   const chartCont = document.querySelector("#calorie-Track");
-  const calorieValue = 2400;  // Actual calorie intake
-const percentFilled = 80;
+  const calorieValue = totalCalories;  // Actual calorie intake
+  const targetCalories=userInfo.targetCalories;
+const percentFilled = ((totalCalories/targetCalories)*100).toFixed(2);
+console.log("Percentage", percentFilled)
 
 const options = {
   series: [percentFilled],
@@ -171,7 +193,7 @@ const options = {
         size: '70%',
       },
       track: {
-        strokeWidth: '40%',
+        strokeWidth: '100%',
         background: '#C0EBA6',
       },
       dataLabels: {
@@ -180,9 +202,9 @@ const options = {
           show:false
         },
         value: {
-          fontSize: '1rem',
+          fontSize: '0.8rem',
           formatter: function () {
-            return `${calorieValue} kcal`;  // Show actual calorie value
+            return `${calorieValue} / ${targetCalories} kcal`;  // Show actual calorie value
           }
         },
       }
@@ -203,10 +225,12 @@ chart.render();
 }
 
 export function renderMacroChart1() {
+  const userInfo=JSON.parse(localStorage.getItem('user'));
+  
   const macroData = {
     labels: ['Protein', 'Carbs', 'Fats'],
-    current: [120, 120, 10],  // Current intake
-    goal: [100, 200, 80]     // Daily goal
+    current: [totalProtein, totalCarbs, totalFats],  // Current intake
+    goal: [0, 0, 80]     // Daily goal
   };
 
   // Calculate progress %
@@ -334,11 +358,13 @@ export function renderWeeklyCaloriesChart() {
 }
 export function renderMacroChart() {
   const ctx = document.getElementById('nutrientTrack').getContext('2d');
+   const userInfo=JSON.parse(localStorage.getItem('user'));
+  
 
   const macroData = {
     labels: ['P', 'C', 'F'],
-    current: [120, 120, 10],
-    goal: [100, 200, 80],
+    current: [totalProtein, totalCarbs, totalFats],
+    goal: [userInfo.targetProtein, userInfo.targetCarbs, userInfo.targetFat],
   };
 
   // Calculate progress %, capped at 100%
@@ -426,5 +452,14 @@ export function renderMacroChart() {
     // plugins: [ChartDataLabels] // You'll need to include the ChartDataLabels plugin
   });
 }
-
+export function getCurrentDaysLog(){
+const currentDateFormatted= new Date().toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+    weekday: 'long'
+  });
+  const truncatedDate=currentDateFormatted.split("y,")[1].slice(1);
+  return getLogByDay(truncatedDate);
+}
 

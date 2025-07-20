@@ -11,6 +11,7 @@ const { error } = require('console');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const { decode } = require('punycode');
 const SECRET = 'mysecretkey';
 
 const app = express();
@@ -279,7 +280,7 @@ app.post('/api/login', async (req, res) => {
     // Optionally store token if you're tracking sessions
     await users.updateOne({ email }, { $set: { token } });
     const userName=user.userName;
-    res.json({ token, userName});
+    res.json(user);
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Internal server error' });
@@ -388,6 +389,60 @@ app.post('/api/signup', async (req, res) => {
 
 });
 
+app.post('/api/DayLog',async(req,res)=>{
+  const {date}=req.body;
+  const token = req.headers.authorization?.split(' ')[1];
+  if(!token){res.status(404).json({error:'Missing Token!'})}
+  if(!date){res.status(404).json({error:'Misssing Date!'})}
+  try {
+   const decoded=jwt.verify(token,SECRET);
+   const userId=decoded.userId;
+   const userLog=getUserFoodLog();
+   const dayLog= await userLog.findOne({id:userId,Date:date});
+   res.status(200).json({dayLog})
+  }catch(err){
+    res.status(500).json({error:err.message,message:"Internal Server Error"});
+  }
+})
+app.post('/api/updateUserInfo',async (req,res)=>{
+  const token=req.headers.authorization?.split(' ')[1];
+  if(!token){res.status(404).json({error:'Missing Token'})}
+
+  try{
+    const decoded=jwt.verify(token,SECRET);
+    const userId=decoded.userId;
+    const usersCollection=getUsersCollection();
+    const {
+      userName, 
+      targetWeight,
+      targetCalories,
+      targetProtein,
+      targetCarbs,
+      targetFat,
+      height,
+      weight
+    } = req.body;
+     const updates = {
+      ...(userName && { userName }),
+      ...(targetWeight && { targetWeight }),
+      ...(targetWeight && { targetWeight }),
+      ...(targetCalories && { targetCalories }),
+      ...(targetProtein && { targetProtein }),
+      ...(targetCarbs && { targetCarbs }),
+      ...(targetFat && { targetFat }),
+      ...(height && { height }),
+      ...(weight && { weight })
+    };
+    const result=await usersCollection.updateOne({id:userId},{ $set: updates });
+     if (result.modifiedCount === 0) {
+      return res.status(404).json({ error: 'User not found or no changes made' });
+    }
+    const user=await usersCollection.findOne({id:userId});
+     res.status(200).json({ message: 'User profile updated successfully',user});
+  } catch(err){
+    res.status(500).json({error:'Internal Server Error',message:err.message})
+  }
+})
 
 // app.listen(PORT, () => {
 //   console.log(`Server running on http://localhost:${PORT}`);
