@@ -279,8 +279,14 @@ app.post('/api/login', async (req, res) => {
 
     // Optionally store token if you're tracking sessions
     await users.updateOne({ email }, { $set: { token } });
-    const userName=user.userName;
-    res.json(user);
+   const userWithToken = {
+  ...user,          // Spread original MongoDB user document (might contain _id, email, etc.)
+  token             // Inject new token
+};
+
+// Optionally remove sensitive info (like passwordHash)
+delete userWithToken.passwordHash;
+res.json(userWithToken);
   } catch (err) {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Internal server error' });
