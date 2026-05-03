@@ -107,7 +107,7 @@ export function displayDayLog(){
    if(dayLog.length!==0) {for( let log in dayLog){
        foodLogContainer.innerHTML+=`<div class='log-cont'>
                       <div class='top-row'>
-                        <p>${dayLog[log].name}</p>
+                        <p>${dayLog[log].name.toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}</p>
                         <span>P:${dayLog[log].protein} gms</span>
                         <span>C:${dayLog[log].carbs} gms</span>
                         <span>F:${dayLog[log].fats} gms</span>

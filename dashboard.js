@@ -37,7 +37,7 @@ export async function renderDashboard(contentDiv) {
       <div class='dash'>
        <div class='locked'>
        <span class="material-icons lock-icon">lock</span>
-        <p class="lock-msg">Subscribe to unlock premium featues</p>
+        <p class="lock-msg">Subscribe to unlock premium features</p>
        </div>
       </div>
       <div class='dash wide-dash'>
@@ -45,7 +45,7 @@ export async function renderDashboard(contentDiv) {
        <canvas id="weeklyCalorieChart" height="200"></canvas>
        <div class='locked'> 
         <span class="material-icons lock-icon">lock</span>
-        <p class="lock-msg">Subscribe to unlock premium featues</p>
+        <p class="lock-msg">Subscribe to unlock premium features</p>
        </div>
       </div>
       
