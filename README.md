@@ -3,7 +3,7 @@
 A full-stack nutrition and fitness tracking web application — built with **vanilla JavaScript** (no frontend framework) as a deliberate engineering choice to demonstrate deep understanding of core web fundamentals including DOM manipulation, Fetch API, async/await, and manual state management.
 
 **🌐 Live Demo:** [prasanthbuddiga.github.io/fittrack](https://prasanthbuddiga.github.io/fittrack/#login)
-> *Note: Google and Facebook login are UI placeholders — use username/password to sign in*
+> *Note: Google and Facebook login are UI placeholders — use testuser@gmail.com/test@123 to sign in*
 
 ---
 
